@@ -18,6 +18,7 @@ import DiagnosticHub from './components/DiagnosticHub';
 import PrescriptionScanner from './components/PrescriptionScanner';
 import AIChatMemory from './components/AIChatMemory';
 import PanIndiaNetwork from './components/PanIndiaNetwork';
+import LabReportScanner from './components/LabReportScanner';
 
 // Supported Pan-India Languages
 const LANGUAGES = [
@@ -82,9 +83,9 @@ export default function App() {
           <span><strong>PAN-INDIA EMERGENCY ADVISORY:</strong> MediAssist is an AI Triage & Educational Tool.</span>
         </div>
         <div style={{ display: 'flex', gap: '18px', fontSize: '0.81rem' }}>
-          <span>🚑 Medical: <strong>108</strong></span>
-          <span>🐄 Pashu Chikitsa: <strong>1962</strong></span>
-          <span>🌾 Kisan Call Centre: <strong>1551</strong></span>
+          <span>Medical: <strong>108</strong></span>
+          <span>Pashu Chikitsa: <strong>1962</strong></span>
+          <span>Kisan Call Centre: <strong>1551</strong></span>
         </div>
       </div>
 
@@ -120,7 +121,7 @@ export default function App() {
               MediAssist <span className="gradient-text">AI</span>
             </h1>
             <div style={{ fontSize: '0.76rem', color: '#64748b', fontWeight: '500' }}>
-              Pan-India Multimodal Diagnostic Platform
+              Multimodal Diagnostic Platform
             </div>
           </div>
         </div>
@@ -130,8 +131,9 @@ export default function App() {
           {[
             { id: 'diagnose', label: 'Diagnostic Hub', icon: Stethoscope },
             { id: 'prescription', label: 'Prescription OCR', icon: FileText },
-            { id: 'chat', label: 'AI Chat (RAG)', icon: MessageSquare },
-            { id: 'network', label: 'Pan-India Network', icon: Globe }
+            { id: 'labreport', label: 'Lab Report Scanner', icon: Database }, 
+            { id: 'chat', label: 'RAG Chatbot', icon: MessageSquare },
+            { id: 'network', label: 'Emergency Helplines', icon: Globe }
           ].map((tab) => {
             const Icon = tab.icon;
             const isActive = activeTab === tab.id;
@@ -169,7 +171,7 @@ export default function App() {
         {/* Right Controls: Backend Status & Language Selector */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
           
-          {/* Backend Status Indicator */}
+          {/* Backend Status Indicator
           <div style={{
             display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.78rem',
             padding: '6px 12px', borderRadius: '20px', background: backendOnline ? '#ecfdf5' : '#fef2f2',
@@ -183,7 +185,7 @@ export default function App() {
             <span style={{ color: backendOnline ? '#047857' : '#b91c1c', fontWeight: '700' }}>
               {backendOnline ? 'Backend Online (8000)' : 'Connecting Backend...'}
             </span>
-          </div>
+          </div> */}
 
           {/* Language Selector */}
           <div style={{ position: 'relative', display: 'flex', alignItems: 'center', gap: '6px' }}>
@@ -221,6 +223,9 @@ export default function App() {
         )}
         {activeTab === 'prescription' && (
           <PrescriptionScanner sessionId={sessionId} onScanComplete={handleActivity} />
+        )}
+        {activeTab === 'labreport' && (
+          <LabReportScanner sessionId={sessionId} onScanComplete={handleActivity} />
         )}
         {activeTab === 'chat' && (
           <AIChatMemory sessionId={sessionId} lastActivityTimestamp={lastActivityTimestamp} />

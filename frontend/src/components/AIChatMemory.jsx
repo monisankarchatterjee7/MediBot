@@ -193,7 +193,6 @@ export default function AIChatMemory({ sessionId, lastActivityTimestamp }) {
         {/* Quick Suggestion Pills */}
         <div style={{ display: 'flex', gap: '8px', padding: '12px 0', overflowX: 'auto' }}>
           {[
-            'What Jan Aushadhi generic savings apply to me?',
             'What safety warnings should I watch for?',
             'What dietary advice matches my diagnosis?',
             'List emergency helpline numbers'

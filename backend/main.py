@@ -16,6 +16,8 @@ load_dotenv()
 from backend.ai_engine import ai_engine
 from backend.prescription_engine import prescription_engine
 from backend.memory_store import memory_store
+from backend.labreport_engine import labreport_engine
+
 
 app = FastAPI(
     title="MediAssist - AI Diagnostic Platform API",
@@ -44,6 +46,12 @@ class DiagnoseRequest(BaseModel):
 class PrescriptionScanRequest(BaseModel):
     image_base64: Optional[str] = Field(default=None, description="Base64 encoded prescription image")
     text_raw: Optional[str] = Field(default="", description="Raw prescription text snippet")
+    session_id: Optional[str] = Field(default=None, description="Active user session ID")
+
+class LabReportScanRequest(BaseModel):
+    image_base64: Optional[str] = Field(default=None, description="Base64 encoded lab report image")
+    text_raw: Optional[str] = Field(default="", description="Raw lab test results or text snippet")
+    modality: Optional[str] = Field(default=None, description="blood | ecg | xray | usg")
     session_id: Optional[str] = Field(default=None, description="Active user session ID")
 
 class ChatRequest(BaseModel):
@@ -124,6 +132,33 @@ async def prescription_scan_endpoint(req: PrescriptionScanRequest):
         "result": result
     }
 
+@app.post("/api/labreport/scan")
+async def labreport_scan_endpoint(req: LabReportScanRequest):
+    """
+    Diagnostic Lab Report Scanner for Blood Tests, ECG, X-Rays, and Ultrasound Scans.
+    Extracts structured biomarkers, reference ranges, and simplified plain-English patient guidance.
+    """
+    session_id = memory_store.ensure_session(req.session_id)
+
+    result = labreport_engine.scan_lab_report(
+        image_base64=req.image_base64,
+        text_raw=req.text_raw,
+        modality=req.modality or "blood"
+    )
+
+    # Save lab report analysis into RAG memory store if supported
+    report_id = None
+    if hasattr(memory_store, "save_lab_report"):
+        report_id = memory_store.save_lab_report(
+            session_id=session_id,
+            report_data=result
+        )
+
+    return {
+        "session_id": session_id,
+        "report_id": report_id,
+        "result": result
+    }
 
 @app.post("/api/chat")
 async def chat_endpoint(req: ChatRequest):
